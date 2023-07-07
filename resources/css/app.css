@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+body{
+    font-family: 'Kanit', sans-serif;
+}
+.sidebar{
+    position: fixed;
+    width: 250px;
+    height: 100vh;
+    transition: 0.6s ease;
+    z-index: 10;
+}
+.toggle-sidebar{
+    left: -250px;
+}
+.main-content{
+    width: 100%;
+    margin-left: 250px;
+    transition: 0.6s ease;
+}
+.toggle-main-content{
+    margin-left: 0px;
+}
+.menu{
+    width: 100%;
+    margin: auto;
+}
+.link a{
+    font-size: 17px;
+    cursor: pointer;
+}
+.link a i{
+    margin-right: 5px;
+}
+.link a .down-arrow{
+    transition: 0.1s ease;
+}
+.link .sub-menu{
+    display: none;
+}
+.link .sub-item{
+    font-size: 15px;
+}
+.rotate{
+    transform: rotate(90deg);
+}
+.image-profile{
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    padding: 5px;
+    border: black solid 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.image-profile input[type="file"]{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    transform: scale(1);
+    border-radius: 50%;
+    opacity: 0;
+}
+.image-profile img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.image-profile .camera{
+    position: absolute;
+    z-index: 10;
+    right: 10px;
+    bottom: 10px;
+    font-size: 30px;
+}
+
+@media screen and (max-width: 1199px){
+    .sidebar{
+        left: -250px;
+        transition: 0.6s ease;
+    }
+    .toggle-sidebar{
+        width: 250px;
+        left: 0;
+    }
+    .main-content{
+        margin-left: 0px;
+        transition: 0.6s ease;
+    }
+    .toggle-main-content{
+        margin-left: 250px;
+    }
+}
