@@ -122,9 +122,9 @@ class ViewsController extends Controller
     // employee dashboard page
     public function employeeDashboardPage(){
         return view('employee.dashboard')
-        ->with('pending', LeaveDetails::where('ld_status', "Pending")->get())
-        ->with('declined', LeaveDetails::where('ld_status', "Declined")->get())
-        ->with('approved', LeaveDetails::where('ld_status', "Approved")->get());
+        ->with('pending', LeaveDetails::where('ld_status', "Pending")->where('u_id', auth()->user()->id)->get())
+        ->with('declined', LeaveDetails::where('ld_status', "Declined")->where('u_id', auth()->user()->id)->get())
+        ->with('approved', LeaveDetails::where('ld_status', "Approved")->where('u_id', auth()->user()->id)->get());
     }
 
     // employee file leave page
@@ -132,5 +132,36 @@ class ViewsController extends Controller
         return view('employee.file_leave')
         ->with('leaves', DB::table('employee_leaves')->select("*")->where('employee_leaves.u_id', auth()->user()->id)->leftJoin('leaves', 'leaves.leave_id', 'employee_leaves.leave_id')->get())
         ->with('total', DB::table('employee_leaves')->select(DB::raw('SUM(employee_leaves.el_total) AS total_sum'))->where('employee_leaves.u_id', auth()->user()->id)->get());
+    }
+
+    // employee list of leave page
+    public function employeeListOfLeavePage(Request $request){
+        $filter = array(
+            "Pending",
+            "Approved",
+            "Declined"
+        );
+        $count = 1;
+        $employeeLeave = LeaveDetails::select("*")
+                         ->join('users', 'users.id', 'leave_details.u_id')
+                         ->join('employee_leaves', "employee_leaves.el_id", 'leave_details.el_id')
+                         ->join('leaves', 'leaves.leave_id', 'employee_leaves.leave_id')
+                         ->where('leave_details.u_id', auth()->user()->id)
+                         ->get();
+
+        if($request->get('type')){
+            $employeeLeave = LeaveDetails::select("*")
+                            ->join('users', 'users.id', 'leave_details.u_id')
+                            ->join('employee_leaves', "employee_leaves.el_id", 'leave_details.el_id')
+                            ->join('leaves', 'leaves.leave_id', 'employee_leaves.leave_id')
+                            ->where('leave_details.u_id', auth()->user()->id)
+                            ->where('leave_details.ld_status', $request->get('type'))
+                            ->get();
+        }
+
+        return view('employee.employee_leave_list')
+                ->with('count', $count)
+                ->with('filter', $filter)
+                ->with('employeeLeave', $employeeLeave);
     }
 }

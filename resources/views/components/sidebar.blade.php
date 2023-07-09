@@ -121,7 +121,7 @@
                             </a>
                             <br>
                             <div class="my-3"></div>
-                            <a href="{{route('admin.list.of.leaves.page')}}" class="ms-3 text-dark text-decoration-none sub-item">
+                            <a href="{{route('employee.list.of.leave.page')}}" class="ms-3 text-dark text-decoration-none sub-item">
                                 <i class="bi bi-clipboard2-fill text-muted"></i>
                                 My Leave List
                             </a>

@@ -49,4 +49,5 @@ Route::group(["prefix"=>"employee"], function(){
     Route::get('dashboard', [ViewsController::class, 'employeeDashboardPage'])->name('employee.dashboard.page');
     Route::get('leave/file', [ViewsController::class, 'employeeFileLeavePage'])->name('employee.file.leave.page');
     Route::post('leave/file/post', [PostController::class, 'employeeFileLeavePost'])->name('employee.file.leave.post');
+    Route::get('list/leave', [ViewsController::class, 'employeeListOfLeavePage'])->name('employee.list.of.leave.page');
 });

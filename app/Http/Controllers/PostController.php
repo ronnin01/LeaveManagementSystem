@@ -285,19 +285,36 @@ class PostController extends Controller
             'reason' => 'required'
         ]);
 
-        $fileLeave = LeaveDetails::create([
-            'u_id' => auth()->user()->id,
-            'el_id' => $request->input('leave'),
-            'ld_message' => $request->input('reason'),
-            'ld_start_date' => $request->input('start_date'),
-            'ld_end_date' => $request->input('end_date'),
-            'ld_status' => 'Pending'
-        ]);
+        if($request->input('total_leave') < 0){
+            return back()->with('error', "You don't have enough Leaves.");
+        }else{
 
-        
+            $days = date('d', strtotime($request->input('end_date'))) - date('d', strtotime($request->input('start_date')));
 
-        if($fileLeave){
-            return back()->with('message', "File Leave successfully. Please wait for the response");
+            if($days < 0){
+                return back()->with('error', "You cant file leave below the expected start date.");
+            }else{
+
+                $updateTotalLeave = EmployeeLeaves::where('u_id', auth()->user()->id)->where('el_id', $request->input('leave'))->update([
+                    'el_total' => $days
+                ]);
+    
+                $fileLeave = LeaveDetails::create([
+                    'u_id' => auth()->user()->id,
+                    'el_id' => $request->input('leave'),
+                    'ld_message' => $request->input('reason'),
+                    'ld_start_date' => $request->input('start_date'),
+                    'ld_end_date' => $request->input('end_date'),
+                    'ld_status' => 'Pending'
+                ]);
+    
+                if($fileLeave && $updateTotalLeave){
+                    return back()->with('message', "File Leave successfully. Please wait for the response.");
+                }
+
+            }
+
         }
+
     }
 }

@@ -15,6 +15,11 @@
                                     {{Session::get('message')}}
                                     <button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
+                            @elseif(Session::has('error'))
+                                <div class="alert alert-danger border-0 alert-dismissible fade show" role="alert">
+                                    {{Session::get('error')}}
+                                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
                             @endif
                         </div> 
                         <div class="my-3">
@@ -43,13 +48,14 @@
                                 <form action="{{route('employee.file.leave.post')}}" method="POST">
                                     @csrf()
                                     @method("POST")
+                                    <input type="hidden" name="total_leave" value="{{$total[0]->total_sum}}">
                                     <div class="row">
                                         <div class="col-12 my-2">
                                             <label class="form-label">Select Leave</label>
                                             <select name="leave" id="" class="form-select shadow-none">
                                                 <option value="" selected disabled>Select Leave</option>
                                                 @foreach($leaves as $leave)
-                                                    <option value="{{$leave->leave_id}}">{{$leave->leave_name}}</option>
+                                                    <option value="{{$leave->el_id}}">{{$leave->leave_name}}</option>
                                                 @endforeach
                                             </select>
                                             @error('leave')

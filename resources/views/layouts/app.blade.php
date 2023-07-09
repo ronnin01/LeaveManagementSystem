@@ -45,6 +45,21 @@
 
             $("#list-employees-leaves-table").DataTable();
 
+            $(document).on('change', '#employee-select-pending', function(){
+                
+                const type = $(this).val();
+
+                if(type == "Pending"){
+                    window.location.href = `${window.location.origin}/employee/list/leave?type=Pending`
+                }else if(type == "Approved"){
+                    window.location.href = `${window.location.origin}/employee/list/leave?type=Approved`
+                }else if(type == "Declined"){
+                    window.location.href = `${window.location.origin}/employee/list/leave?type=Declined`
+                }else{
+                    window.location.href = `${window.location.origin}/employee/list/leave`
+                }
+            });
+
         });
     </script>
     
