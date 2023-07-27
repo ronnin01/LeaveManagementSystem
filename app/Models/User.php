@@ -41,4 +41,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function leave_details(){
+        return $this->hasMany(LeaveDetails::class, 'u_id');
+    }
 }

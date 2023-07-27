@@ -19,10 +19,16 @@ class ViewsController extends Controller
 
     // admin dashboard page
     public function adminDashboardPage(){
+        $count = 1;
         return view('admin.dashboard')
+        ->with('count', $count)
         ->with("department", Department::all())
         ->with('leave', Leaves::all())
-        ->with('employee', User::whereNot('dept_id', 1)->get());
+        ->with('employee', User::whereNot('dept_id', 1)->get())
+        ->with('pending_leaves', DB::table('leave_details')->select('*', DB::raw("CONCAT(users.u_firstname, ' ', users.u_lastname) as fullname"))->leftJoin('users', 'users.id', 'leave_details.u_id')->leftJoin('departments', 'departments.dept_id', 'users.dept_id')->join('employee_leaves', 'employee_leaves.el_id', 'leave_details.el_id')->join('leaves', 'leaves.leave_id', 'employee_leaves.leave_id')->where('leave_details.ld_status', "Pending")->orderBy('leave_details.ld_id', 'DESC')->get())
+        ->with('pending', LeaveDetails::where('ld_status', 'Pending')->get())
+        ->with('approved', LeaveDetails::where('ld_status', 'Approved')->get())
+        ->with('declined', LeaveDetails::where('ld_status', 'Declined')->get());
     }
 
     // admin add department page
@@ -121,10 +127,17 @@ class ViewsController extends Controller
 
     // employee dashboard page
     public function employeeDashboardPage(){
+        $count = 1;
         return view('employee.dashboard')
         ->with('pending', LeaveDetails::where('ld_status', "Pending")->where('u_id', auth()->user()->id)->get())
         ->with('declined', LeaveDetails::where('ld_status', "Declined")->where('u_id', auth()->user()->id)->get())
-        ->with('approved', LeaveDetails::where('ld_status', "Approved")->where('u_id', auth()->user()->id)->get());
+        ->with('approved', LeaveDetails::where('ld_status', "Approved")->where('u_id', auth()->user()->id)->get())
+        ->with('ld_data', DB::table('leave_details')->select(['leave_details.ld_message', 'leave_details.ld_start_date', 'leave_details.ld_end_date', 'leave_details.ld_total_days', 'leave_details.ld_status', 'leaves.leave_name'])->leftJoin('employee_leaves', 'employee_leaves.el_id', 'leave_details.el_id')->join('leaves', 'leaves.leave_id', 'employee_leaves.leave_id')->where('leave_details.u_id', auth()->user()->id)->orderBy('leave_details.ld_id', 'DESC')->get())
+        ->with('count', $count);
+
+        // return response()->json([
+        //     'data' => User::with('leave_details')->where('users.id', auth()->user()->id)->get()
+        // ]);
     }
 
     // employee file leave page

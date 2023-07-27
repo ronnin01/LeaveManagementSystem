@@ -289,15 +289,17 @@ class PostController extends Controller
             return back()->with('error', "You don't have enough Leaves.");
         }else{
 
-            $days = date('d', strtotime($request->input('end_date'))) - date('d', strtotime($request->input('start_date')));
+            $day = strtotime($request->input('end_date')) - strtotime($request->input('start_date'));
+            $days = floor($day / (60 * 60 * 24));
 
             if($days < 0){
                 return back()->with('error', "You cant file leave below the expected start date.");
             }else{
 
-                $updateTotalLeave = EmployeeLeaves::where('u_id', auth()->user()->id)->where('el_id', $request->input('leave'))->update([
-                    'el_total' => $days
-                ]);
+                $updateTotalLeave = EmployeeLeaves::where('u_id', auth()->user()->id)->where('el_id', $request->input('leave'))->first();
+
+                $updateTotalLeave->el_total = $updateTotalLeave->el_total - $days;
+                $updateTotalLeave->save();
     
                 $fileLeave = LeaveDetails::create([
                     'u_id' => auth()->user()->id,
@@ -305,6 +307,7 @@ class PostController extends Controller
                     'ld_message' => $request->input('reason'),
                     'ld_start_date' => $request->input('start_date'),
                     'ld_end_date' => $request->input('end_date'),
+                    'ld_total_days' => $days,
                     'ld_status' => 'Pending'
                 ]);
     
@@ -316,5 +319,50 @@ class PostController extends Controller
 
         }
 
+    }
+
+    // ADMIN DECLINE EMPLOYEE LEAVE
+    public function adminDeclineEmployeeLeavePost(Request $request){
+
+        $declineStatus = LeaveDetails::where('ld_id', $request->input('ld_id'))->update([
+            "ld_status"=> "Declined"
+        ]);
+
+        if($declineStatus){
+            $basic  = new \Vonage\Client\Credentials\Basic("704218e9", "SMXpuIq9qmHzMFME");
+            $client = new \Vonage\Client($basic);
+
+            $response = $client->sms()->send(
+                new \Vonage\SMS\Message\SMS("+639436634199", "CTU-D HR", 'You\'re leave application has been declined')
+            );
+
+            $elUpdateTotalDays = EmployeeLeaves::where('el_id', $request->input('el_id'))->where('u_id', $request->input('u_id'))->first();
+
+            $elUpdateTotalDays->el_total = $elUpdateTotalDays->el_total + $request->input('ld_total_days');
+            $elUpdateTotalDays->save();
+            
+
+            return redirect()->back()->with('message', 'Leave application declined successfully!');
+        }
+
+        
+    }
+
+    // ADMIN APPROVE EMPLOYEE LEAVE
+    public function adminApproveEmployeeLeavePost(Request $request){
+        $approveEmployeeLeave = LeaveDetails::where('ld_id', $request->input('ld_id'))->update([
+            'ld_status' => 'Approved'
+        ]);
+
+        if($approveEmployeeLeave){
+            $basic  = new \Vonage\Client\Credentials\Basic("704218e9", "SMXpuIq9qmHzMFME");
+            $client = new \Vonage\Client($basic);
+
+            $response = $client->sms()->send(
+                new \Vonage\SMS\Message\SMS("+639436634199", "CTU-D HR", 'You\'re leave application has been Approved! Enjoy!')
+            );
+
+            return redirect()->back()->with('message', 'Leave application approved successfully!');
+        }
     }
 }

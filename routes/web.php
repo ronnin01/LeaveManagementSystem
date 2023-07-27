@@ -43,6 +43,8 @@ Route::group(['prefix'=>'admin'], function(){
     Route::get('list/leave/employee', [ViewsController::class, 'adminListOfEmployeeLeavePage'])->name('admin.list.of.employee.leave.page');
     Route::get('list/leave/employee/view/{id}', [ViewsController::class, 'adminViewEmployeeLeavePage'])->name('admin.view.employee.leave.page');
     Route::put('update/employee/leave/total/{id}', [PostController::class, 'adminUpdateEmployeeLeaveTotalPost'])->name('admin.update.employee.leave.total.post');
+    Route::post('declined/leave/application', [PostController::class, 'adminDeclineEmployeeLeavePost'])->name('admin.decline.employee.leave.post');
+    Route::post('approve/leave/application', [PostController::class, 'adminApproveEmployeeLeavePost'])->name('admin.approve.employee.leave.post');
 });
 
 Route::group(["prefix"=>"employee"], function(){

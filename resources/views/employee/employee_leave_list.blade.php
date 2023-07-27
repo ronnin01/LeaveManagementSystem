@@ -37,7 +37,7 @@
                                 </select>
                             </div>
                             <div class="my-2 table-responsive">
-                                <table class="table table-borderless">
+                                <table class="table table-borderless" id="employee-leave-list-table">
                                     <thead>
                                         <tr class="text-center">
                                             <th>No.</th>

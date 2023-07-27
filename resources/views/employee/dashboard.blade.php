@@ -46,25 +46,39 @@
                     <div class="card shadow" style="border-top: 4px solid black;">
                         <div class="card-body">
                             <div class="my-3">
-                                <p class="lead mb-0">Pending Leaves</p>
+                                <p class="lead mb-0">Leave Status</p>
                             </div>
                             <div class="my-3 table-responsive">
-                                <table class="table table-borderless">
-                                    <thead class="border-bottom">
+                                <table class="table table-borderless" id="employee-leave-status">
+                                    <thead>
                                         <tr class="text-center">
                                             <th>No.</th>
-                                            <th>Employee Picture</th>
-                                            <th>Employee Fullname</th>
-                                            <th>Employee Age</th>
-                                            <th>Employee Address</th>
-                                            <th>Employee Contact Number</th>
-                                            <th>Employee Department</th>
-                                            <th>Employee Leave Status</th>
-                                            <th>Actions</th>
+                                            <th>Leave Type</th>
+                                            <th>Leave Message</th>
+                                            <th>Leave Start Date</th>
+                                            <th>Leave End Date</th>
+                                            <th>Leave Total Days</th>
+                                            <th>Leave Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-
+                                        @foreach($ld_data as $ld)
+                                            <tr class="text-center">
+                                                <td>{{$count++}}</td>
+                                                <td>{{$ld->leave_name}}</td>
+                                                <td>{{$ld->ld_message}}</td>
+                                                <td>{{$ld->ld_start_date}}</td>
+                                                <td>{{$ld->ld_end_date}}</td>
+                                                <td>{{$ld->ld_total_days}}</td>
+                                                @if($ld->ld_status == "Approved")
+                                                    <th class="text-success">{{$ld->ld_status}}</th>
+                                                @elseif($ld->ld_status == "Pending")
+                                                    <th class="text-warning">{{$ld->ld_status}}</th>
+                                                @elseif($ld->ld_status == "Declined")
+                                                    <th class="text-danger">{{$ld->ld_status}}</th>
+                                                @endif
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>

@@ -16,6 +16,11 @@ class LeaveDetails extends Model
         'ld_message',
         'ld_start_date',
         'ld_end_date',
+        'ld_total_days',
         'ld_status'
     ];
+
+    public function users(){
+        return $this->belongsTo(User::class);
+    }
 }

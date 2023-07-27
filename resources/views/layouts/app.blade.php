@@ -45,6 +45,12 @@
 
             $("#list-employees-leaves-table").DataTable();
 
+            $("#employee-leave-list-table").DataTable();
+
+            $('#employee-leave-status').DataTable();
+
+            $('#admin-employee-leave-pending').DataTable();
+
             $(document).on('change', '#employee-select-pending', function(){
                 
                 const type = $(this).val();
